@@ -1,11 +1,11 @@
 package com.ipaye.bankingapp.implementation;
 
-import Mapper.AccountMapper;
+import com.ipaye.bankingapp.Mapper.AccountMapper;
 import com.ipaye.bankingapp.dto.AccountDto;
 import com.ipaye.bankingapp.entity.Account;
+import com.ipaye.bankingapp.exception.AccountException;
 import com.ipaye.bankingapp.repository.AccountRepository;
 import com.ipaye.bankingapp.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDto getAccountById(Long id) {
         Account account = accountRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Account does not exist"));
+                .orElseThrow(() -> new AccountException("Account does not exist"));
         return AccountMapper.mapToAccountDto(account);
     }
 
@@ -40,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDto deposit(Long id, double amount) {
         Account account = accountRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Account does not exist"));
+                .orElseThrow(() -> new AccountException("Account does not exist"));
         double total = account.getBalance() + amount;
         account.setBalance(total);
         Account savedAccount = accountRepository.save(account);
@@ -53,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDto withdraw(Long id, double amount) {
         Account account = accountRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Account does not exist"));
+                .orElseThrow(() -> new AccountException("Account does not exist"));
         if(account.getBalance() < amount){
             throw new RuntimeException("Insufficient amount");
         }
@@ -75,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
     public void deletedAccount(Long id) {
         Account account = accountRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Account does not exists"));
+                .orElseThrow(() -> new AccountException("Account does not exists"));
         accountRepository.deleteById(id);
     }
 
